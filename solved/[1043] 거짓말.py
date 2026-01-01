@@ -44,7 +44,6 @@ N, M = map(int, input().split())
 true_person = set(list(map(int, input().split()))[1:]) # 진실 아는 사람들
 lie_person = set() # 구라로 아는 사람들
 party = [set(list(map(int, input().split()))[1:]) for _ in range(M)]
-party.reverse()
 
 print(bt(M-1))
 
@@ -53,7 +52,6 @@ print(bt(M-1))
     그룹에 거짓으로 아는 사람이 있음 << 거짓으로 확정
     그룹에 거짓과 진실로 아는 사람이 섞여 있음. << 0으로 리턴
     아직은 선택할 여지가 있는, 무고한 사람만 있음 << true / false 선택
-
 """
 
 """
