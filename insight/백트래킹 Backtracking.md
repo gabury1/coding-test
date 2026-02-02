@@ -334,6 +334,130 @@ for start, end in meetings:
 - 정렬, 그리디로 풀 수 있으면 그게 훨씬 빠름
 - 백트래킹은 **다른 방법이 없을 때** 최후의 수단
 
+## Python 최적화 ⭐⭐⭐
+
+백트래킹은 재귀가 깊고 호출이 많으니 Python 최적화가 특히 중요!
+
+### 1. **재귀 호출 전에 체크** (호출 횟수 줄이기)
+
+```python
+# ❌ 재귀 안에서 체크 (불필요한 호출!)
+def dfs(y, x):
+    if not (0 <= y < R and 0 <= x < C): return 0  # 호출된 후에 체크
+    if visited[y][x]: return 0
+    ...
+    for dy, dx in directions:
+        dfs(y+dy, x+dx)  # 무조건 4번 호출
+
+# ✅ 재귀 밖에서 체크 (호출 횟수 최소화!)
+def dfs(y, x):
+    ...
+    for dy, dx in directions:
+        ny, nx = y+dy, x+dx
+        if not (0 <= ny < R and 0 <= nx < C): continue  # 호출 전 체크!
+        if visited[ny][nx]: continue                     # 호출 전 체크!
+        dfs(ny, nx)  # 유효한 경우만 호출
+```
+
+**파이썬에서 함수 호출은 비싼 연산!** 불필요한 호출 줄이는 게 핵심.
+
+### 2. **리스트 생성 피하기 (global 활용)**
+
+```python
+# ❌ 매번 리스트 생성 + max 계산
+def dfs(y, x):
+    r = []
+    for ...:
+        r.append(dfs(...))
+    return max(r) + 1
+
+# ✅ global로 직접 업데이트
+answer = 0
+def dfs(y, x, count):
+    global answer
+    answer = max(answer, count)  # 직접 업데이트
+    for ...:
+        dfs(ny, nx, count + 1)
+```
+
+### 3. **재귀가 깊으면 반복문(stack)으로 변환**
+
+```python
+# ❌ 재귀 백트래킹 (깊은 재귀면 느림)
+def dfs(y, x):
+    ...
+    dfs(ny, nx)
+    ...  # 백트래킹
+
+# ✅ 반복 stack (재귀 overhead 없음)
+stack = set()
+stack.add((y, x, state))
+while stack:
+    y, x, state = stack.pop()
+    for ...:
+        stack.add((ny, nx, new_state))
+```
+
+> **주의**: 반복 stack 백트래킹은 상태를 튜플로 관리해야 함 (선택 취소 불가)
+
+### 4. **visited 체크: 배열 > set**
+
+```python
+# ✅ 배열 인덱스 (가장 빠름)
+check = [False] * 26
+check[ord(c) - ord('A')] = True
+
+# ❌ set (해시 연산 overhead)
+visited = set()
+visited.add(c)
+```
+
+### Python 최적화 체크리스트
+- [ ] 재귀 호출 전에 체크하고 있나? (불필요한 호출 줄이기)
+- [ ] 리스트 생성을 피했나? (global 활용)
+- [ ] 재귀가 깊은가? → 반복문 stack 고려
+- [ ] visited를 배열로 구현했나?
+
+---
+
+## 비트마스킹 + 백트래킹
+
+방문 상태를 **정수(mask)**로 표현하면 메모이제이션 가능!
+
+```python
+# 문자 A~Z를 비트로 표현
+# A → 1 << 0 = 0b00...001
+# B → 1 << 1 = 0b00...010
+# C → 1 << 2 = 0b00...100
+
+def dfs(y, x, mask):
+    if (y, x, mask) in memo:
+        return memo[(y, x, mask)]  # 캐시 반환
+
+    idx = ord(grid[y][x]) - ord('A')
+
+    # 방문 체크
+    if mask & (1 << idx): return 0
+
+    # 방문 추가
+    new_mask = mask | (1 << idx)
+
+    # 탐색
+    result = 0
+    for ny, nx in neighbors:
+        result = max(result, dfs(ny, nx, new_mask))
+
+    memo[(y, x, mask)] = result + 1
+    return result + 1
+```
+
+**왜 비트마스킹?**
+- set은 dict key로 쓸 수 없음 → 메모이제이션 불가
+- 비트마스킹은 정수 → dict key 가능!
+- ABC와 BAC 모두 같은 mask → 중복 탐색 제거!
+
+---
+
 ## 체크리스트
 
 - [ ] 가지치기 조건을 명확히 했나?
@@ -341,3 +465,6 @@ for start, end in meetings:
 - [ ] 결과 저장 시 깊은 복사했나?
 - [ ] 중복 탐색을 방지했나?
 - [ ] 더 효율적인 방법(그리디, DP)은 없나?
+- [ ] Python 최적화: 재귀 호출 횟수 줄였나?
+- [ ] Python 최적화: 리스트 생성 피했나?
+- [ ] 메모이제이션 가능하면 비트마스킹 고려했나?
