@@ -1,3 +1,10 @@
+# [12865] 평범한 배낭
+# https://www.acmicpc.net/problem/12865
+# 골드 5
+
+import sys
+
+input = sys.stdin.readline
 
 N, K = map(int, input().split())
 arr = [list(map(int, input().split())) for _ in range(N)]

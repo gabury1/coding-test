@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.acmicpc.net)",
+      "WebFetch(domain:solved.ac)"
+    ]
+  }
+}

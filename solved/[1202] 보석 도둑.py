@@ -2,23 +2,28 @@
 # https://www.acmicpc.net/problem/1202
 
 import sys
+import heapq
 
 input = sys.stdin.readline
 N, K = map(int, input().split())
-jems = [tuple(map(int, input().split())) for _ in range(N)]
-jems.sort(key=lambda x : x[1], reverse=True)
+jems = [tuple(map(int, input().split())) for _ in range(N)] # 무게 , 가치
+jems.sort(key=lambda x : x[0])
 bags = [int(input()) for _ in range(K)]
 bags.sort()
-bags_full = [False] * K
 
+
+q = []
+j_idx = 0
 sum = 0
-for w, v in jems :
-    for i in range(K) :
-        bag_w = bags[i]
-        if not bags_full[i] and w <= bag_w :
-            sum += v
-            bags_full[i] = True
-            break
+for b in bags :
+    while j_idx < N and jems[j_idx][0] <= b :
+        w, v = jems[j_idx]
+        j_idx += 1
+        heapq.heappush(q, -v)
+
+    if q : v = -heapq.heappop(q)
+    else : continue
+    sum += v
 
 print(sum)
 
@@ -31,19 +36,30 @@ print(sum)
 10
 2
 
+164
+
+
 2 1
 5 10
 100 100
 11
-"""
+
+10
+
+1 1
+2 1
+1
 
 """
-가중치(가격) 을 기반으로 보석 내림차순 정렬,
-무게를 기반으로 오름차순 주머니 정렬
 
-후, 보석을 계속 넣어보다가, 보석을 전부 넣거나, 가방을 전부 사용했다면 출력해보면 되지 않을까?
-그게 곧 최대값이 될 것 같다.
+"""
 
-dfs로 돌려보자. 
+가방 하나가 가장 가치 있어지는 경우
+개비싼 보석을 딱 맞게 넣었을 경우!
+
+보석은 가치를 기준으로 내림차순,
+가방은 무게 기준 오름차순으로 정렬.
+
+
 
 """

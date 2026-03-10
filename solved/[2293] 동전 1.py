@@ -1,22 +1,24 @@
+# [2293] 동전 1
+# https://www.acmicpc.net/problem/2293
+# 골드 5
+
+import sys
+
+input = sys.stdin.readline
+
 
 N, K = map(int, input().split())
 arr = [int(input()) for _ in range(N)]
-arr.sort()
 
-# DP 초기화
-dp = [[0] * N for _ in range(K+1)]
-for i in range(N) :
-    dp[arr[i]][i] = 1
+dp = [1] + [0] * K
 
-for i in range(1, K) :
-    for j in range(N) :
-        if i + arr[j] <= K :
-            for k in range(j, N) :
-                dp[i + arr[j]][j] += dp[i][k]
 
-print(sum(dp[K]))
+for coin in arr :
+    for i in range(coin, K+1) :
+        dp[i] += dp[i-coin] 
 
-            
+print(dp[K])
+
 
 
 """

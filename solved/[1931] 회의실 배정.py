@@ -1,3 +1,5 @@
+# [1931] 회의실 배정
+# https://www.acmicpc.net/problem/1931
 
 N = int(input())
 arr = [list(map(int, input().split(" "))) for _ in range(N)]

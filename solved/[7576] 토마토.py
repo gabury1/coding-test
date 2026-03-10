@@ -1,3 +1,8 @@
+# [7576] 토마토
+# https://www.acmicpc.net/problem/7576
+# 골드 5
+
+
 from collections import deque
 
 def bfs(y, x) :
@@ -20,7 +25,6 @@ for i in range(m) :
     for j in range(n) :
         if grid[i][j] == 1 : q.append((i, j, 0))
         elif grid[i][j] == 0 : cnt += 1
-
 
 new_days = 0
 while q :
